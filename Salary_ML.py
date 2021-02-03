@@ -6,6 +6,16 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 import seaborn as sns
 
+def my_clean_data(df:pd.DataFrame):
+
+    df = df.dropna(axis=0, subset=['Salary'])
+    y = df.Salary
+    X = df.drop(['Respondent', 'ExpectedSalary', 'Salary'], axis=1)
+    X = X.fillna(X.mean())
+    X = pd.get_dummies(X, prefix_sep='_', drop_first=True)
+
+    return X, y
+
 def clean_data(df):
     '''
     INPUT
@@ -106,7 +116,7 @@ def find_optimal_lm_mod(X, y, cutoffs, test_size = .30, random_state=42, plot=Tr
     return r2_scores_test, r2_scores_train, lm_model, X_train, X_test, y_train, y_test
 
 def main():
-    df = pd.read_csv('../Part1/stackoverflow/survey_results_public.csv')
+    df = pd.read_csv('./survey_results_public.csv')
     X, y = clean_data(df)
     #cutoffs here pertains to the number of missing values allowed in the used columns.
     #Therefore, lower values for the cutoff provides more predictors in the model.
